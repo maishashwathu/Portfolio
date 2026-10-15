@@ -7,3 +7,6 @@
 /* Keep inactive notifications fully offscreen, including their border. */
 .toast{visibility:hidden;opacity:0}.toast.show{visibility:visible;opacity:1}
 
+
+/* Personal portrait replaces the player monogram without cropping the face. */
+.player-portrait{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-bottom:1px solid #74816a}
