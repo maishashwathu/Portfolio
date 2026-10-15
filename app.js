@@ -1,79 +1,24 @@
 'use strict';
-(() => {
-  const projects = window.portfolioProjects;
-  const root = document.getElementById('projects');
-  const svg = body => `<svg viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${body}</svg>`;
-  const line = (x1,y1,x2,y2,color='#6b8b57',width=2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}"/>`;
-  const circle = (x,y,r,fill='#b4d68b') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>`;
-  const label = (x,y,text,size=10,color='#a9bc99') => `<text x="${x}" y="${y}" fill="${color}" font-size="${size}" font-family="monospace">${text}</text>`;
-  function artwork(type) {
-    if(type==='molecule'||type==='polymer') {
-      const shift=type==='polymer'?25:0;
-      let b='<rect width="600" height="240" fill="#18251b"/>';
-      for(let i=0;i<9;i++) b+=line(i*75,0,i*75,240,'#29362a',.4);
-      const points=[[200,100],[255,68],[310,100],[310,163],[255,195],[200,163]];
-      points.forEach((p,i)=>{const n=points[(i+1)%6];b+=line(p[0],p[1]-shift,n[0],n[1]-shift);});
-      b+=line(310,100-shift,372,72)+line(372,72,430,109)+line(430,109,430,174)+line(430,174,373,207)+line(373,207,310,163-shift)+line(200,100-shift,143,67)+line(200,163-shift,139,197);
-      [...points.map(p=>[p[0],p[1]-shift]),[372,72],[430,109],[430,174],[373,207],[143,67],[139,197]].forEach((p,i)=>{b+=circle(p[0],p[1],i%3===0?13:7,i%3===0?'#b5d98b':'#62835c');});
-      b+=label(45,205,type==='polymer'?'REPEAT. REPRESENT. PREDICT.':'ATOMS → GRAPHS → EMBEDDINGS',9);
-      return svg(b);
-    }
-    if(type==='audio') {
-      let b='<rect width="600" height="240" fill="#17211c"/>';
-      for(let i=0;i<76;i++){const h=15+Math.abs(Math.sin(i*1.7)*Math.cos(i*.13))*125;b+=`<rect x="${42+i*7}" y="${125-h/2}" width="3" height="${h}" fill="${i%4===0?'#d0c28a':'#79a883'}" opacity="${.45+Math.abs(Math.sin(i))*.5}"/>`;}
-      return svg(b+line(40,125,565,125,'#b7c98e',.5)+label(42,207,'FREQUENCY / TIME / IDENTITY',9));
-    }
-    if(type==='market') {
-      let b='<rect width="600" height="240" fill="#24251b"/>';
-      for(let y=55;y<210;y+=37)b+=line(40,y,565,y,'#46503b',.5);
-      for(let k=0;k<3;k++){let d='';for(let i=0;i<72;i++){const y=155-k*31+Math.sin(i*.7+k)*9+Math.cos(i*2.4)*6-(i===44?55:0);d+=(i?' L':'M')+(40+i*7.2)+' '+y;}b+=`<path d="${d}" fill="none" stroke="${['#bbd28b','#c6ad75','#688d75'][k]}" stroke-width="1.7"/>`;}
-      b+=line(357,40,357,195,'#cbbb80',1)+circle(357,40,3,'#cbbb80')+label(370,51,'DEVIATION',8)+label(42,217,'ILLUSTRATIVE SIGNAL / NOT MARKET DATA',8);
-      return svg(b);
-    }
-    if(type==='text') {
-      let b='<rect width="600" height="240" fill="#24251d"/>';
-      for(let j=0;j<5;j++){for(let i=0;i<8;i++){const w=20+((i*17+j*13)%28);b+=`<rect x="${85+i*53}" y="${60+j*26}" width="${w}" height="7" rx="1" fill="${(i+j)%5===0?'#bfd78e':'#555c47'}"/>`;}}
-      b+='<rect x="239" y="103" width="128" height="30" fill="none" stroke="#b4d287" stroke-dasharray="4 3"/>';
-      return svg(b+label(85,211,'TEXT → FEATURES → CLASSIFICATION',9));
-    }
-    if(type==='energy') {
-      let b='<rect width="600" height="240" fill="#19251d"/>';
-      for(let r=0;r<4;r++)for(let c=0;c<24;c++){b+=`<rect x="${82+c*19}" y="${59+r*30}" width="15" height="21" rx="1" fill="${(c+r*3)%7<3?'#9cbb75':'#304735'}"/>`;}
-      return svg(b+label(82,200,'00:00',8)+label(484,200,'24:00',8)+label(82,225,'SIMULATED APPLIANCE SCHEDULE',9));
-    }
-    return svg('<rect width="600" height="240" fill="#242a1d"/>'+label(70,120,'∑',65,'#b9d289')+label(205,160,'x²',55,'#9db282')+label(340,100,'π',65,'#c6b680')+label(450,165,'√',65,'#93b391')+label(80,208,'SMALL CHALLENGES. BIG DISCOVERIES.',9));
-  }
-  projects.forEach(p => {
-    const card=document.createElement('article');card.className='project-card';card.dataset.category=p.filter;
-    card.innerHTML=`<div class="project-visual">${artwork(p.visual)}<span class="project-id">EXPERIMENT / ${p.id}</span><span class="visual-tag">${p.category}</span></div><div class="project-content"><p class="project-category">${p.category}</p><h3>${p.title}</h3><p class="project-description">${p.description}</p><div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div><div class="project-bottom"><button class="case-button" data-id="${p.id}" aria-label="Read case study: ${p.slug}">Read field notes <span aria-hidden="true">↗</span></button><a href="https://github.com/maishashwathu/${p.slug}" target="_blank" rel="noopener" aria-label="View ${p.slug} source on GitHub">GitHub ↗</a></div></div>`;
-    root.appendChild(card);
-  });
-  document.querySelectorAll('.filter').forEach(button => button.addEventListener('click',()=>{
-    const filter=button.dataset.filter;
-    document.querySelectorAll('.filter').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});
-    let count=0;
-    root.querySelectorAll('.project-card').forEach(card=>{card.hidden=filter!=='all'&&card.dataset.category!==filter;if(!card.hidden)count++;});
-    document.getElementById('project-count').textContent=`${count} PROJECT${count===1?'':'S'}`;
-  }));
-  const dialog=document.getElementById('case-study');
-  let opener;
-  root.addEventListener('click',event=>{
-    const button=event.target.closest('.case-button');if(!button)return;
-    const p=projects.find(x=>x.id===button.dataset.id);opener=button;
-    document.getElementById('case-content').innerHTML=`<p class="project-category">${p.category}</p><h2 id="case-title">${p.title}</h2><p>${p.summary}</p><div class="result"><strong>${p.result}</strong><p>${p.resultNote}</p></div><h3>Inside the experiment</h3><ul>${p.methods.map(x=>`<li>${x}</li>`).join('')}</ul><h3>What the result means</h3><p>${p.limitation}</p><div class="tags">${p.tags.map(x=>`<span>${x}</span>`).join('')}</div><a class="button primary" href="https://github.com/maishashwathu/${p.slug}" target="_blank" rel="noopener">Explore repository ↗</a>${p.extra?`<p><a class="text-link" href="https://github.com/maishashwathu/${p.slug}/${p.extra.path}" target="_blank" rel="noopener">${p.extra.label} ↗</a></p>`:''}`;
-    dialog.showModal();dialog.scrollTop=0;document.body.classList.add('dialog-open');
-  });
-  document.querySelector('.close-dialog').addEventListener('click',()=>dialog.close());
-  dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
-  dialog.addEventListener('close',()=>{document.body.classList.remove('dialog-open');opener?.focus();});
-  const toggle=document.querySelector('.menu-toggle'),nav=document.getElementById('navigation');
-  function closeMenu(){toggle.setAttribute('aria-expanded','false');nav.classList.remove('open');}
-  toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open);});
-  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open')){closeMenu();toggle.focus();}});
-  document.getElementById('copy-email').addEventListener('click',async event=>{
-    const button=event.currentTarget,status=document.getElementById('copy-status');
-    try{await navigator.clipboard.writeText('shashwatjain8733@gmail.com');button.textContent='Copied ✓';status.textContent='Email address copied to clipboard.';setTimeout(()=>button.textContent='Copy email',2500);}catch{button.textContent='shashwatjain8733@gmail.com';status.textContent='Copy unavailable. Email address is displayed below the contact links.';}
-  });
-  document.getElementById('year').textContent=new Date().getFullYear();
-})();
+const $=s=>document.querySelector(s);
+const projects=window.portfolioProjects||[];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const save=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
+const seen=new Set(read('sj-missions',[]));
+const art={molecule:'<g stroke="currentColor" stroke-width="3" fill="none"><path d="m100 80 65-35 65 35v70l-65 35-65-35zm130 0 65-35 60 35v70l-60 35-65-35M100 80 50 50m50 100-50 30m305-30 45 30"/><circle cx="165" cy="115" r="25"/><circle cx="295" cy="115" r="25"/></g>',audio:'<g stroke="currentColor" stroke-width="7" stroke-linecap="round">'+Array.from({length:38},(_,i)=>{const h=15+Math.abs(Math.sin(i*.72)*Math.cos(i*.18))*100;return `<path d="M${40+i*10} ${110-h/2}v${h}"/>`}).join('')+'</g>',market:'<g fill="none" stroke="currentColor"><path opacity=".2" d="M30 50h390M30 90h390M30 130h390M30 170h390M100 20v180M200 20v180M300 20v180"/><path stroke-width="3" d="m30 170 30-15 25 8 30-43 30 15 25-35 25 12 30-55 30 28 25-10 25-45 35 23 35-40"/><circle cx="280" cy="85" r="15" stroke-dasharray="3 3"/></g>',polymer:'<g fill="none" stroke="currentColor" stroke-width="3">'+Array.from({length:6},(_,i)=>`<path d="m${40+i*65} 90 25-15 25 15v30l-25 15-25-15z"/>`).join('')+'<path d="M35 60H20v110h15m380-110h15v110h-15"/></g>',text:'<g fill="none" stroke="currentColor" stroke-width="3"><rect x="110" y="40" width="220" height="150" rx="3"/><path d="M130 65h180M130 85h100M130 110h180M130 130h180M130 150h120"/><circle cx="315" cy="150" r="35" fill="#5d5d36"/><path d="m299 150 11 12 23-26"/></g>',energy:'<g fill="none" stroke="currentColor" stroke-width="3"><path d="m90 110 90-65 90 65m-160-10v90h140v-90M150 190v-55h60v55"/><path d="m325 35-45 85h40l-15 65 60-90h-40z" fill="currentColor" opacity=".8"/></g>',math:'<g fill="currentColor" font-family="Georgia,serif" font-size="60"><text x="60" y="100">π</text><text x="170" y="170">∑</text><text x="300" y="100">√x</text><text x="80" y="180" font-size="30">x² + y²</text></g>'};
+function render(filter='all'){const list=projects.filter(p=>filter==='all'||p.filter===filter);$('#projects').innerHTML=list.map(p=>`<article class="project-card"><div class="project-art" data-art="${p.visual}" aria-hidden="true"><svg viewBox="0 0 450 220">${art[p.visual]||art.math}</svg><span class="mission-no">MISSION ${p.id}</span><span class="art-label">${p.category.split(' / ')[0]}</span></div><div class="project-body"><p class="project-category">${esc(p.category)}</p><h3>${esc(p.title)}</h3><p class="project-description">${esc(p.description)}</p><div class="tags">${p.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div><button class="brief-button ${seen.has(p.id)?'viewed':''}" data-project="${p.id}" aria-label="Open briefing: ${esc(p.title)}"><span>${seen.has(p.id)?'BRIEFING EXPLORED':'OPEN MISSION BRIEFING'}</span><span>↗</span></button></div></article>`).join('');$('#project-count').textContent=String(list.length).padStart(2,'0')+' AVAILABLE';}
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});render(b.dataset.filter)}));
+let toastTimer;function notify(title,message){clearTimeout(toastTimer);$('#toast').innerHTML=`<strong>${esc(title)}</strong>${esc(message)}`;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),4200)}
+const dialog=$('#case-study');let opener;
+$('#projects').addEventListener('click',e=>{const button=e.target.closest('[data-project]');if(!button)return;const p=projects.find(p=>p.id===button.dataset.project);opener=button;$('#case-content').innerHTML=`<p class="eyebrow">MISSION ${p.id} / ${esc(p.category)}</p><h2 id="case-title">${esc(p.title)}</h2><p>${esc(p.summary)}</p><div class="result"><strong>${esc(p.result)}</strong><p>${esc(p.resultNote)}</p></div><h3>THE APPROACH</h3><ul>${p.methods.map(m=>`<li>${esc(m)}</li>`).join('')}</ul><h3>CONTEXT & LIMITATIONS</h3><p class="limit">${esc(p.limitation)}</p><div class="actions"><a class="button" href="https://github.com/maishashwathu/${p.slug}" target="_blank" rel="noopener">VIEW SOURCE ↗</a>${p.extra?`<a class="button" href="https://github.com/maishashwathu/${p.slug}/${p.extra.path}" target="_blank" rel="noopener">${esc(p.extra.label)} ↗</a>`:''}</div>`;dialog.showModal();dialog.scrollTop=0;document.body.style.overflow='hidden';seen.add(p.id);save('sj-missions',[...seen]);button.classList.add('viewed');button.querySelector('span').textContent='BRIEFING EXPLORED';});
+$('#close-dialog').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});dialog.addEventListener('close',()=>{document.body.style.overflow='';opener?.focus()});
+const tools=[['Py','Python','CORE LANGUAGE','My go-to language for experiments, data pipelines, machine learning, and application development.','See Python in action','01'],['Pt','PyTorch','DEEP LEARNING','Building and training neural networks for molecular graphs and speaker identification.','Explore the voice project','02'],['Sk','Scikit-learn','CLASSICAL ML','Text features, model comparison, and evaluation with traditional machine learning.','Explore news classification','05'],['Rg','RAG / LangChain','GENERATIVE AI','Connecting language models to documents with chunking, embeddings, FAISS, and retrieval.','See résumé projects',null],['Db','MySQL','DATABASES','Relational modeling, normalization, and role-based application workflows.','See résumé projects',null],['Bi','Power BI','DATA STORYTELLING','Interactive dashboards to explore patterns and make data easier to understand.','See résumé projects',null],['St','Streamlit','INTERACTIVE APPS','Turning Python workflows into usable dashboards and interactive experiences.','Explore energy optimization','06'],['Gt','Git / GitHub','WORKFLOW','Version control and public repositories for sharing code, experiments, and documentation.','Browse all repositories','github']];
+function selectTool(i){const t=tools[i];$('#tool-detail').innerHTML=`<p class="eyebrow">EQUIPPED / ${t[2]}</p><h3>${t[1]}</h3><p>${t[3]}</p><a href="${t[5]==='github'?'https://github.com/maishashwathu?tab=repositories':t[5]?`https://github.com/maishashwathu/${projects.find(p=>p.id===t[5]).slug}`:'resume.html'}" target="_blank" rel="noopener">${t[4]} ↗</a>`;document.querySelectorAll('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.tool)===i)))}
+$('#tool-grid').innerHTML=tools.map((t,i)=>`<button class="tool-button" data-tool="${i}" aria-pressed="false"><strong>${t[0]}</strong><span>${t[1]}</span></button>`).join('');$('#tool-grid').addEventListener('click',e=>{const b=e.target.closest('[data-tool]');if(b)selectTool(Number(b.dataset.tool))});selectTool(0);
+function setNight(night){document.body.classList.toggle('night',night);$('#theme-toggle').setAttribute('aria-pressed',String(night));$('#theme-toggle').innerHTML=night?'☀ <span>Day mode</span>':'☾ <span>Night mode</span>';$('#theme-toggle').setAttribute('aria-label',night?'Switch to day mode':'Switch to night mode');save('sj-night',night)}setNight(read('sj-night',false));$('#theme-toggle').addEventListener('click',()=>setNight(!document.body.classList.contains('night')));
+$('#map-toggle').addEventListener('click',()=>{const open=$('#map-panel').hidden;$('#map-panel').hidden=!open;$('#map-toggle').setAttribute('aria-expanded',String(open))});$('#map-panel').addEventListener('click',e=>{if(e.target.closest('a')){$('#map-panel').hidden=true;$('#map-toggle').setAttribute('aria-expanded','false')}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#map-panel').hidden=true;$('#map-toggle').setAttribute('aria-expanded','false')}});
+const visited=new Set();const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)visited.add(entry.target.id)});$('#exploration-count').textContent=`${visited.size}/5`;$('#exploration-fill').style.width=`${visited.size*20}%`;$('#exploration-label').textContent=`${visited.size} of 5 locations explored`;if(visited.size===5&&!read('sj-explored',false)){save('sj-explored',true);notify('MISSION PASSED','World explored. Your next mission: let’s build something.')}},{threshold:.15});['home','missions','profile','loadout','contact'].forEach(id=>observer.observe(document.getElementById(id)));
+$('#copy-email').addEventListener('click',async()=>{try{await navigator.clipboard.writeText('shashwatjain8733@gmail.com');notify('CONTACT SAVED','Email address copied to your clipboard.')}catch{notify('LET’S CONNECT','shashwatjain8733@gmail.com')}});
+let cheat='';document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.matches('input,textarea,[contenteditable=true]')||e.key.length!==1)return;cheat=(cheat+e.key.toUpperCase()).slice(-6);if(cheat==='HIREME'){notify('CHEAT ACTIVATED','Great collaborator unlocked. Let’s talk about your next mission.');$('#contact').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});cheat=''}});
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let ticking=false;window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{$('.hero-art').style.setProperty('--parallax',Math.min(scrollY*.12,65)+'px');ticking=false});ticking=true}},{passive:true})}
+$('#year').textContent=new Date().getFullYear();render();
