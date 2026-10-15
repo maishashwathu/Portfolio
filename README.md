@@ -9,7 +9,7 @@ Live site: https://maishashwathu.github.io/Portfolio/
 - Original sunset city illustration, responsive layouts, and day/night themes.
 - Seven project mission briefings with methods, results, source links, and evaluation limitations.
 - Project filters, interactive skill loadout, section minimap, and exploration progress.
-- Phone-style contact links, email copying, and the `HIREME` keyboard Easter egg.
+- Phone-style contact links, email copying, and the `HIRE` keyboard Easter egg.
 - Keyboard-accessible controls, native modal dialogs, reduced-motion support, and a printable résumé.
 
 ## Files
