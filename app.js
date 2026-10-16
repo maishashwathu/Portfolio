@@ -19,6 +19,24 @@ function setNight(night){document.body.classList.toggle('night',night);$('#theme
 $('#map-toggle').addEventListener('click',()=>{const open=$('#map-panel').hidden;$('#map-panel').hidden=!open;$('#map-toggle').setAttribute('aria-expanded',String(open))});$('#map-panel').addEventListener('click',e=>{if(e.target.closest('a')){$('#map-panel').hidden=true;$('#map-toggle').setAttribute('aria-expanded','false')}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#map-panel').hidden=true;$('#map-toggle').setAttribute('aria-expanded','false')}});
 const visited=new Set();const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)visited.add(entry.target.id)});$('#exploration-count').textContent=`${visited.size}/5`;$('#exploration-fill').style.width=`${visited.size*20}%`;$('#exploration-label').textContent=`${visited.size} of 5 locations explored`;if(visited.size===5&&!read('sj-explored',false)){save('sj-explored',true);notify('MISSION PASSED','World explored. Your next mission: let’s build something.')}},{threshold:.15});['home','missions','profile','loadout','contact'].forEach(id=>observer.observe(document.getElementById(id)));
 $('#copy-email').addEventListener('click',async()=>{try{await navigator.clipboard.writeText('shashwatjain8733@gmail.com');notify('CONTACT SAVED','Email address copied to your clipboard.')}catch{notify('LET’S CONNECT','shashwatjain8733@gmail.com')}});
-let cheat='';document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.matches('input,textarea,[contenteditable=true]')||e.key.length!==1)return;cheat=(cheat+e.key.toUpperCase()).slice(-4);if(cheat==='HIRE'){notify('CHEAT ACTIVATED','Great collaborator unlocked. Let’s talk about your next mission.');$('#contact').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});cheat=''}});
+const hireEmail = 'shashwatjain8733@gmail.com';
+const hireSubject = 'Opportunity for Shashwat Jain';
+const hireBody = 'Hi Shashwat,\n\nI explored your portfolio and would like to discuss an opportunity with you.\n\nRole / opportunity:\nCompany:\nDetails:\n\nBest regards,\n';
+const hireMailto = 'mailto:' + hireEmail + '?subject=' + encodeURIComponent(hireSubject) + '&body=' + encodeURIComponent(hireBody);
+$('#hire-email-link').href = hireMailto;
+let cheat='';
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||e.isComposing||e.target.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]')){cheat='';return;}
+  if(e.key.length!==1){if(e.key!=='Shift')cheat='';return;}
+  cheat=(cheat+e.key.toUpperCase()).slice(-4);
+  if(cheat==='HIRE'){
+    cheat='';
+    if(dialog.open)dialog.close();
+    $('#hire-email-panel').hidden=false;
+    $('#contact').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    notify('CHEAT ACTIVATED','Opening an email draft. Review it and press Send in your email app.');
+    window.location.href=hireMailto;
+  }
+});
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let ticking=false;window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{$('.hero-art').style.setProperty('--parallax',Math.min(scrollY*.12,65)+'px');ticking=false});ticking=true}},{passive:true})}
 $('#year').textContent=new Date().getFullYear();render();
