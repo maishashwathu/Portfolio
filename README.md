@@ -18,7 +18,8 @@ Live site: https://maishashwathu.github.io/Portfolio/
 - `styles.css`: responsive styling and themes.
 - `app.js`: interaction behavior.
 - `projects.js`: project data and evaluation context.
-- `resume.html`: standalone printable résumé.
+- `assets/NM_SJ_Resume.pdf`: supplied résumé, updated November 3, 2026. Portfolio résumé links open this PDF.
+- `resume.html`: compatibility redirect for earlier résumé links.
 - `assets/los-santos.webp`: original AI-generated city illustration.
 
 Serve the repository root with any static web server for local development. No build or package installation is required. GitHub Pages publishes `main` from the repository root. Google Fonts is optional; system font fallbacks are provided.
